@@ -417,7 +417,7 @@ managers:
 - `apt.txt`: run-time dependencies installed by apt.
 - `gem.txt`: run-time dependencies installed by gem.
 - `npm.txt`: run-time dependencies installed by npm.
-- `pip.txt`: a normal [pip `requirements.txt`][] file, for run-time dependencies too. It
+- `pip.txt`: a normal [uv `requirements.txt`][] file, for run-time dependencies too. It
   will get executed with `--update` flag, just in case you want to overwrite any of the
   pre-bundled dependencies.
 
@@ -736,8 +736,8 @@ issue or pull request.
 [odoo s.a.]: https://www.odoo.com
 [openupgrade]: https://github.com/OCA/OpenUpgrade/
 [original odoo]: https://github.com/odoo/odoo
-[pip `requirements.txt`]:
-  https://pip.readthedocs.io/en/latest/user_guide/#requirements-files
+[uv `requirements.txt`]:
+  https://docs.astral.sh/uv/concepts/dependencies/#requirements-files
 [postgres client applications]:
   https://www.postgresql.org/docs/current/static/reference-client.html
 [production]: #production
