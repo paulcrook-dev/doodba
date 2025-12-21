@@ -81,6 +81,7 @@ RUN apt-get -qq update \
     && dpkg -i geoipupdate_${GEOIP_UPDATER_VERSION}_linux_${TARGETARCH}.deb \
     && rm geoipupdate_${GEOIP_UPDATER_VERSION}_linux_${TARGETARCH}.deb \
     && apt-get autopurge -yqq \
+    && curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh \
     && rm -Rf wkhtmltox.deb /var/lib/apt/lists/* /tmp/* \
     && sync
 
@@ -105,9 +106,9 @@ RUN mkdir -p auto/addons auto/geoip custom/src/private \
 
 # Doodba-QA dependencies in a separate virtualenv
 COPY qa /qa
-RUN python -m venv --system-site-packages /qa/venv \
+RUN uv venv --system-site-packages /qa/venv \
     && . /qa/venv/bin/activate \
-    && pip install \
+    && uv pip install \
         click \
         coverage \
         six \
@@ -144,7 +145,8 @@ RUN build_deps=" \
     && curl -o requirements.txt https://raw.githubusercontent.com/$ODOO_SOURCE/$ODOO_VERSION/requirements.txt \
     && echo "Setting gevent and greenlet versions to 21.12.0 and 1.1.0 (compatible with Debian Buster)" \
     && sed -i -E "s/(gevent==)[0-9\.]+/\121.12.0/; s/(greenlet==)[0-9\.]+/\11.1.0/" requirements.txt \
-    && pip install -r requirements.txt \
+    && uv pip install --system --upgrade setuptools \
+    && uv pip install --system -r requirements.txt \
         'websocket-client~=0.56' \
         astor \
         # Install fix from https://github.com/acsone/click-odoo-contrib/pull/93

@@ -49,12 +49,12 @@ RUN echo "LAST_SYSTEM_UID=$LAST_SYSTEM_UID\nLAST_SYSTEM_GID=$LAST_SYSTEM_GID\nFI
     && apt-get -qq update \
     && apt-get install -yqq --no-install-recommends curl \
     && if [ "$TARGETARCH" = "arm64" ]; then \
-        WKHTMLTOPDF_CHECKSUM=$WKHTMLTOPDF_ARM64_CHECKSUM; \
+    WKHTMLTOPDF_CHECKSUM=$WKHTMLTOPDF_ARM64_CHECKSUM; \
     elif [ "$TARGETARCH" = "amd64" ]; then \
-        WKHTMLTOPDF_CHECKSUM=$WKHTMLTOPDF_AMD64_CHECKSUM; \
+    WKHTMLTOPDF_CHECKSUM=$WKHTMLTOPDF_AMD64_CHECKSUM; \
     else \
-        echo "Unsupported architecture: $TARGETARCH" >&2; \
-        exit 1; \
+    echo "Unsupported architecture: $TARGETARCH" >&2; \
+    exit 1; \
     fi \
     && curl -SLo wkhtmltox.deb ${WKHTMLTOPDF_URL} \
     && echo "Downloading wkhtmltopdf from: ${WKHTMLTOPDF_URL}" \
@@ -62,19 +62,19 @@ RUN echo "LAST_SYSTEM_UID=$LAST_SYSTEM_UID\nLAST_SYSTEM_GID=$LAST_SYSTEM_GID\nFI
     && echo "Computed wkhtmltox checksum: $(sha256sum wkhtmltox.deb | awk '{ print $1 }')" \
     && echo "${WKHTMLTOPDF_CHECKSUM} wkhtmltox.deb" | sha256sum -c - \
     && apt-get install -yqq --no-install-recommends \
-        ./wkhtmltox.deb \
-        chromium \
-        ffmpeg \
-        fonts-liberation2 \
-        gettext \
-        git \
-        gnupg2 \
-        locales-all \
-        nano \
-        npm \
-        openssh-client \
-        telnet \
-        vim \
+    ./wkhtmltox.deb \
+    chromium \
+    ffmpeg \
+    fonts-liberation2 \
+    gettext \
+    git \
+    gnupg2 \
+    locales-all \
+    nano \
+    npm \
+    openssh-client \
+    telnet \
+    vim \
     && echo 'deb https://apt.postgresql.org/pub/repos/apt/ bookworm-pgdg main' >> /etc/apt/sources.list.d/postgresql.list \
     && curl -SL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     && apt-get update \
@@ -110,8 +110,8 @@ COPY qa /qa
 RUN uv venv --system-site-packages /qa/venv \
     && . /qa/venv/bin/activate \
     && uv pip install \
-        click \
-        coverage \
+    click \
+    coverage \
     && deactivate \
     && mkdir -p /qa/artifacts
 
@@ -121,24 +121,24 @@ ENV ODOO_VERSION="$ODOO_VERSION"
 
 # Install Odoo hard & soft dependencies, and Doodba utilities
 RUN build_deps=" \
-        build-essential \
-        libfreetype6-dev \
-        libfribidi-dev \
-        libghc-zlib-dev \
-        libharfbuzz-dev \
-        libjpeg-dev \
-        liblcms2-dev \
-        libldap2-dev \
-        libopenjp2-7-dev \
-        libpq-dev \
-        libsasl2-dev \
-        libtiff5-dev \
-        libwebp-dev \
-        libxml2-dev \
-        libxslt-dev \
-        tcl-dev \
-        tk-dev \
-        zlib1g-dev \
+    build-essential \
+    libfreetype6-dev \
+    libfribidi-dev \
+    libghc-zlib-dev \
+    libharfbuzz-dev \
+    libjpeg-dev \
+    liblcms2-dev \
+    libldap2-dev \
+    libopenjp2-7-dev \
+    libpq-dev \
+    libsasl2-dev \
+    libtiff5-dev \
+    libwebp-dev \
+    libxml2-dev \
+    libxslt-dev \
+    tcl-dev \
+    tk-dev \
+    zlib1g-dev \
     " \
     && apt-get update \
     && apt-get install -yqq --no-install-recommends $build_deps \
@@ -148,24 +148,24 @@ RUN build_deps=" \
     # need to upgrade setuptools, since the fixes for CVE-2024-6345 rolled out in base images we get errors "error: invalid command 'bdist_wheel'"
     && uv pip install --system --upgrade setuptools \
     && uv pip install --system -r requirements.txt \
-        'websocket-client~=0.56' \
-        astor \
-        click-odoo-contrib \
-        debugpy \
-        pydevd-odoo \
-        git+https://github.com/mailgun/flanker.git@v0.9.15#egg=flanker[validator] \
-        geoip2 \
-        "git-aggregator==4.0" \
-        inotify \
-        pdfminer.six \
-        pg_activity \
-        phonenumbers \
-        plumbum \
-        pudb \
-        pyOpenSSL \
-        python-magic \
-        watchdog \
-        wdb \
+    'websocket-client~=0.56' \
+    astor \
+    click-odoo-contrib \
+    debugpy \
+    pydevd-odoo \
+    git+https://github.com/mailgun/flanker.git@v0.9.15#egg=flanker[validator] \
+    geoip2 \
+    "git-aggregator==4.0" \
+    inotify \
+    pdfminer.six \
+    pg_activity \
+    phonenumbers \
+    plumbum \
+    pudb \
+    pyOpenSSL \
+    python-magic \
+    watchdog \
+    wdb \
     && (python3 -m compileall -q /usr/local/lib/python3.10/ || true) \
     # generate flanker cached tables during install when /usr/local/lib/ is still intended to be written to
     # https://github.com/Tecnativa/doodba/issues/486
@@ -179,11 +179,11 @@ ARG VCS_REF
 ARG BUILD_DATE
 ARG VERSION
 LABEL org.label-schema.schema-version="$VERSION" \
-      org.label-schema.vendor=Tecnativa \
-      org.label-schema.license=Apache-2.0 \
-      org.label-schema.build-date="$BUILD_DATE" \
-      org.label-schema.vcs-ref="$VCS_REF" \
-      org.label-schema.vcs-url="https://github.com/Tecnativa/doodba"
+    org.label-schema.vendor=Tecnativa \
+    org.label-schema.license=Apache-2.0 \
+    org.label-schema.build-date="$BUILD_DATE" \
+    org.label-schema.vcs-ref="$VCS_REF" \
+    org.label-schema.vcs-url="https://github.com/Tecnativa/doodba"
 
 # Onbuild version, with all the magic
 FROM base AS onbuild
@@ -231,32 +231,32 @@ ONBUILD ARG PGDATABASE=prod
 
 # Config variables
 ONBUILD ENV ADMIN_PASSWORD="$ADMIN_PASSWORD" \
-            DEFAULT_REPO_PATTERN="$DEFAULT_REPO_PATTERN" \
-            DEFAULT_REPO_PATTERN_ODOO="$DEFAULT_REPO_PATTERN_ODOO" \
-            UNACCENT="$UNACCENT" \
-            PGUSER="$PGUSER" \
-            PGPASSWORD="$PGPASSWORD" \
-            PGHOST="$PGHOST" \
-            PGPORT=$PGPORT \
-            PGDATABASE="$PGDATABASE" \
-            PROXY_MODE="$PROXY_MODE" \
-            SMTP_SERVER="$SMTP_SERVER" \
-            SMTP_PORT=$SMTP_PORT \
-            SMTP_USER="$SMTP_USER" \
-            SMTP_PASSWORD="$SMTP_PASSWORD" \
-            SMTP_SSL="$SMTP_SSL" \
-            EMAIL_FROM="$EMAIL_FROM" \
-            WITHOUT_DEMO="$WITHOUT_DEMO"
+    DEFAULT_REPO_PATTERN="$DEFAULT_REPO_PATTERN" \
+    DEFAULT_REPO_PATTERN_ODOO="$DEFAULT_REPO_PATTERN_ODOO" \
+    UNACCENT="$UNACCENT" \
+    PGUSER="$PGUSER" \
+    PGPASSWORD="$PGPASSWORD" \
+    PGHOST="$PGHOST" \
+    PGPORT=$PGPORT \
+    PGDATABASE="$PGDATABASE" \
+    PROXY_MODE="$PROXY_MODE" \
+    SMTP_SERVER="$SMTP_SERVER" \
+    SMTP_PORT=$SMTP_PORT \
+    SMTP_USER="$SMTP_USER" \
+    SMTP_PASSWORD="$SMTP_PASSWORD" \
+    SMTP_SSL="$SMTP_SSL" \
+    EMAIL_FROM="$EMAIL_FROM" \
+    WITHOUT_DEMO="$WITHOUT_DEMO"
 ONBUILD ARG LOCAL_CUSTOM_DIR=./custom
 ONBUILD COPY --chown=root:odoo $LOCAL_CUSTOM_DIR /opt/odoo/custom
 
 # https://docs.python.org/3/library/logging.html#levels
 ONBUILD ARG LOG_LEVEL=INFO
 ONBUILD RUN [ -d ~root/.ssh ] && rm -r ~root/.ssh; \
-            mkdir -p /opt/odoo/custom/ssh \
-            && ln -s /opt/odoo/custom/ssh ~root/.ssh \
-            && chmod -R u=rwX,go= /opt/odoo/custom/ssh \
-            && sync
+    mkdir -p /opt/odoo/custom/ssh \
+    && ln -s /opt/odoo/custom/ssh ~root/.ssh \
+    && chmod -R u=rwX,go= /opt/odoo/custom/ssh \
+    && sync
 ONBUILD ARG DB_VERSION=latest
 ONBUILD RUN /opt/odoo/common/build && sync
 ONBUILD VOLUME ["/var/lib/odoo"]

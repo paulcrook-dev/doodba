@@ -40,24 +40,24 @@ RUN sed -i 's,http://deb.debian.org,http://archive.debian.org,g;s,http://securit
 # See https://github.com/$ODOO_SOURCE/blob/$ODOO_VERSION/debian/control
 RUN apt-get -qq update \
     && apt-get install -yqq --no-install-recommends \
-        curl \
+    curl \
     && curl -SLo wkhtmltox.deb https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/${WKHTMLTOPDF_VERSION}/wkhtmltox_${WKHTMLTOPDF_VERSION}-1.buster_amd64.deb \
     && echo "${WKHTMLTOPDF_CHECKSUM} wkhtmltox.deb" | sha256sum -c - \
     && apt-get install -yqq --no-install-recommends \
-        ./wkhtmltox.deb \
-        chromium \
-        ffmpeg \
-        fonts-liberation2 \
-        gettext \
-        git \
-        gnupg2 \
-        locales-all \
-        nano \
-        npm \
-        openssh-client \
-        telnet \
-        vim \
-        zlibc \
+    ./wkhtmltox.deb \
+    chromium \
+    ffmpeg \
+    fonts-liberation2 \
+    gettext \
+    git \
+    gnupg2 \
+    locales-all \
+    nano \
+    npm \
+    openssh-client \
+    telnet \
+    vim \
+    zlibc \
     && echo 'deb https://apt-archive.postgresql.org/pub/repos/apt buster-pgdg main' >> /etc/apt/sources.list.d/postgresql.list \
     && curl -SL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     && apt-get update \
@@ -66,6 +66,7 @@ RUN apt-get -qq update \
     && dpkg -i geoipupdate_${GEOIP_UPDATER_VERSION}_linux_amd64.deb \
     && rm geoipupdate_${GEOIP_UPDATER_VERSION}_linux_amd64.deb \
     && apt-get autopurge -yqq \
+    && curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh \
     && rm -Rf wkhtmltox.deb /var/lib/apt/lists/* /tmp/* \
     && sync
 
@@ -90,12 +91,12 @@ RUN mkdir -p auto/addons auto/geoip custom/src/private \
 
 # Doodba-QA dependencies in a separate virtualenv
 COPY qa /qa
-RUN python -m venv --system-site-packages /qa/venv \
+RUN uv venv --system-site-packages /qa/venv \
     && . /qa/venv/bin/activate \
-    && pip install \
-        click \
-        coverage \
-        six \
+    && uv pip install \
+    click \
+    coverage \
+    six \
     && deactivate \
     && mkdir -p /qa/artifacts \
     && git clone --depth 1 $MQT /qa/mqt
@@ -106,46 +107,47 @@ ENV ODOO_VERSION="$ODOO_VERSION"
 
 # Install Odoo hard & soft dependencies, and Doodba utilities
 RUN build_deps=" \
-        build-essential \
-        libfreetype6-dev \
-        libfribidi-dev \
-        libghc-zlib-dev \
-        libharfbuzz-dev \
-        libjpeg-dev \
-        liblcms2-dev \
-        libldap2-dev \
-        libopenjp2-7-dev \
-        libpq-dev \
-        libsasl2-dev \
-        libtiff5-dev \
-        libwebp-dev \
-        libxml2-dev \
-        libxslt-dev \
-        tcl-dev \
-        tk-dev \
-        zlib1g-dev \
+    build-essential \
+    libfreetype6-dev \
+    libfribidi-dev \
+    libghc-zlib-dev \
+    libharfbuzz-dev \
+    libjpeg-dev \
+    liblcms2-dev \
+    libldap2-dev \
+    libopenjp2-7-dev \
+    libpq-dev \
+    libsasl2-dev \
+    libtiff5-dev \
+    libwebp-dev \
+    libxml2-dev \
+    libxslt-dev \
+    tcl-dev \
+    tk-dev \
+    zlib1g-dev \
     " \
     && apt-get update \
     && apt-get install -yqq --no-install-recommends $build_deps \
-    && pip install \
-        -r https://raw.githubusercontent.com/$ODOO_SOURCE/$ODOO_VERSION/requirements.txt \
-        'websocket-client~=0.56' \
-        astor \
-        "git-aggregator<3.0.0" \
-        # Install fix from https://github.com/acsone/click-odoo-contrib/pull/93
-        git+https://github.com/Tecnativa/click-odoo-contrib.git@fix-active-modules-hashing \
-        "pg_activity<2.0.0" \
-        phonenumbers \
-        plumbum \
-        ptvsd \
-        debugpy \
-        pydevd-odoo \
-        pudb \
-        python-magic \
-        watchdog \
-        wdb \
-        geoip2 \
-        inotify \
+    && uv pip install --system --upgrade setuptools \
+    && uv pip install --system \
+    -r https://raw.githubusercontent.com/$ODOO_SOURCE/$ODOO_VERSION/requirements.txt \
+    'websocket-client~=0.56' \
+    astor \
+    "git-aggregator<3.0.0" \
+    # Install fix from https://github.com/acsone/click-odoo-contrib/pull/93
+    git+https://github.com/Tecnativa/click-odoo-contrib.git@fix-active-modules-hashing \
+    "pg_activity<2.0.0" \
+    phonenumbers \
+    plumbum \
+    ptvsd \
+    debugpy \
+    pydevd-odoo \
+    pudb \
+    python-magic \
+    watchdog \
+    wdb \
+    geoip2 \
+    inotify \
     && (python3 -m compileall -q /usr/local/lib/python3.6/ || true) \
     && apt-get purge -yqq $build_deps \
     && apt-get autopurge -yqq \
@@ -156,11 +158,11 @@ ARG VCS_REF
 ARG BUILD_DATE
 ARG VERSION
 LABEL org.label-schema.schema-version="$VERSION" \
-      org.label-schema.vendor=Tecnativa \
-      org.label-schema.license=Apache-2.0 \
-      org.label-schema.build-date="$BUILD_DATE" \
-      org.label-schema.vcs-ref="$VCS_REF" \
-      org.label-schema.vcs-url="https://github.com/Tecnativa/doodba"
+    org.label-schema.vendor=Tecnativa \
+    org.label-schema.license=Apache-2.0 \
+    org.label-schema.build-date="$BUILD_DATE" \
+    org.label-schema.vcs-ref="$VCS_REF" \
+    org.label-schema.vcs-url="https://github.com/Tecnativa/doodba"
 
 # Onbuild version, with all the magic
 FROM base AS onbuild
@@ -208,31 +210,31 @@ ONBUILD ARG PGDATABASE=prod
 
 # Config variables
 ONBUILD ENV ADMIN_PASSWORD="$ADMIN_PASSWORD" \
-            DEFAULT_REPO_PATTERN="$DEFAULT_REPO_PATTERN" \
-            DEFAULT_REPO_PATTERN_ODOO="$DEFAULT_REPO_PATTERN_ODOO" \
-            UNACCENT="$UNACCENT" \
-            PGUSER="$PGUSER" \
-            PGPASSWORD="$PGPASSWORD" \
-            PGHOST="$PGHOST" \
-            PGPORT=$PGPORT \
-            PGDATABASE="$PGDATABASE" \
-            PROXY_MODE="$PROXY_MODE" \
-            SMTP_SERVER="$SMTP_SERVER" \
-            SMTP_PORT=$SMTP_PORT \
-            SMTP_USER="$SMTP_USER" \
-            SMTP_PASSWORD="$SMTP_PASSWORD" \
-            SMTP_SSL="$SMTP_SSL" \
-            EMAIL_FROM="$EMAIL_FROM" \
-            WITHOUT_DEMO="$WITHOUT_DEMO"
+    DEFAULT_REPO_PATTERN="$DEFAULT_REPO_PATTERN" \
+    DEFAULT_REPO_PATTERN_ODOO="$DEFAULT_REPO_PATTERN_ODOO" \
+    UNACCENT="$UNACCENT" \
+    PGUSER="$PGUSER" \
+    PGPASSWORD="$PGPASSWORD" \
+    PGHOST="$PGHOST" \
+    PGPORT=$PGPORT \
+    PGDATABASE="$PGDATABASE" \
+    PROXY_MODE="$PROXY_MODE" \
+    SMTP_SERVER="$SMTP_SERVER" \
+    SMTP_PORT=$SMTP_PORT \
+    SMTP_USER="$SMTP_USER" \
+    SMTP_PASSWORD="$SMTP_PASSWORD" \
+    SMTP_SSL="$SMTP_SSL" \
+    EMAIL_FROM="$EMAIL_FROM" \
+    WITHOUT_DEMO="$WITHOUT_DEMO"
 ONBUILD ARG LOCAL_CUSTOM_DIR=./custom
 ONBUILD COPY --chown=root:odoo $LOCAL_CUSTOM_DIR /opt/odoo/custom
 
 # https://docs.python.org/3/library/logging.html#levels
 ONBUILD ARG LOG_LEVEL=INFO
 ONBUILD RUN mkdir -p /opt/odoo/custom/ssh \
-            && ln -s /opt/odoo/custom/ssh ~root/.ssh \
-            && chmod -R u=rwX,go= /opt/odoo/custom/ssh \
-            && sync
+    && ln -s /opt/odoo/custom/ssh ~root/.ssh \
+    && chmod -R u=rwX,go= /opt/odoo/custom/ssh \
+    && sync
 ONBUILD ARG DB_VERSION=latest
 ONBUILD RUN /opt/odoo/common/build && sync
 ONBUILD VOLUME ["/var/lib/odoo"]
